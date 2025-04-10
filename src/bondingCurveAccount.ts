@@ -100,7 +100,7 @@ export class BondingCurveAccount {
 
   getBuyOutPrice(amount: bigint, feeBasisPoints: bigint): bigint {
     let solTokens =
-      amount < this.realSolReserves ? this.realSolReserves : amount;
+      amount < this.virtualTokenReserves ? this.virtualTokenReserves : amount;
     let totalSellValue =
       (solTokens * this.virtualSolReserves) /
         (this.virtualTokenReserves - solTokens) +
