@@ -18,6 +18,7 @@ import {
   SetParamsEvent,
   TradeEvent,
   TransactionResult,
+  Signer,
 } from "./types.js";
 import {
   toCompleteEvent,
@@ -60,8 +61,8 @@ export class PumpFunSDK {
   }
 
   async createAndBuy (
-    creator: Keypair,
-    mint: Keypair,
+    creator: Signer,
+    mint: Signer,
     createTokenMetadata: CreateTokenMetadata,
     buyAmountSol: bigint,
     slippageBasisPoints: bigint = 500n,
@@ -113,7 +114,7 @@ export class PumpFunSDK {
   }
 
   async buy(
-    buyer: Keypair,
+    buyer: Signer,
     mint: PublicKey,
     buyAmountSol: bigint,
     slippageBasisPoints: bigint = 500n,
@@ -142,7 +143,7 @@ export class PumpFunSDK {
   }
 
   async sell(
-    seller: Keypair,
+    seller: Signer,
     mint: PublicKey,
     sellTokenAmount: bigint,
     slippageBasisPoints: bigint = 500n,
@@ -176,7 +177,7 @@ export class PumpFunSDK {
     name: string,
     symbol: string,
     uri: string,
-    mint: Keypair
+    mint: Signer
   ) {
     const mplTokenMetadata = new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
 

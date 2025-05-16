@@ -1,4 +1,4 @@
-import { PublicKey, VersionedTransactionResponse } from "@solana/web3.js";
+import { PublicKey, VersionedTransactionResponse, Transaction, VersionedTransaction } from "@solana/web3.js";
 
 export type CreateTokenMetadata = {
   name: string;
@@ -78,3 +78,8 @@ export type TransactionResult = {
   results?: VersionedTransactionResponse;
   success: boolean;
 };
+
+export interface Signer {
+  publicKey: PublicKey;
+  signTransaction(tx: Transaction | VersionedTransaction): Promise<Transaction | VersionedTransaction>;
+}

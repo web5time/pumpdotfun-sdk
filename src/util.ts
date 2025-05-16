@@ -11,7 +11,7 @@ import {
   VersionedTransaction,
   VersionedTransactionResponse,
 } from "@solana/web3.js";
-import { PriorityFee, TransactionResult } from "./types.js";
+import { PriorityFee, TransactionResult, Signer } from "./types.js";
 
 export const DEFAULT_COMMITMENT: Commitment = "finalized";
 export const DEFAULT_FINALITY: Finality = "finalized";
@@ -34,7 +34,7 @@ export async function sendTx(
   connection: Connection,
   tx: Transaction,
   payer: PublicKey,
-  signers: Keypair[],
+  signers: Signer[],
   priorityFees?: PriorityFee,
   commitment: Commitment = DEFAULT_COMMITMENT,
   finality: Finality = DEFAULT_FINALITY
@@ -56,7 +56,19 @@ export async function sendTx(
   newTx.add(tx);
 
   let versionedTx = await buildVersionedTx(connection, payer, newTx, commitment);
-  versionedTx.sign(signers);
+
+  // 兼容 Signer 签名（Keypair 或钱包）
+  if (signers && signers.length > 0) {
+    // 如果只有一个 signer，直接用钱包/Keypair 签名
+    if (signers.length === 1) {
+      versionedTx = (await signers[0].signTransaction(versionedTx)) as VersionedTransaction;
+    } else {
+      // 多签情况，依次签名
+      for (const signer of signers) {
+        versionedTx = (await signer.signTransaction(versionedTx)) as VersionedTransaction;
+      }
+    }
+  }
 
   try {
     const sig = await connection.sendTransaction(versionedTx, {
